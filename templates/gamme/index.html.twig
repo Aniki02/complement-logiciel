@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ parent() }} |
+    Gammes
+{% endblock %}
+{% block content %}
+    <div>
+        <div class="card-header mb-3">
+            <h4>
+                Gammes
+            </h4>
+        </div>
+        <table  class="table table-striped">
+            <tr>
+                <th  colspan="2" {% if pagination.isSorted('g.name') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(pagination, 'Nom', 'g.name') }}
+                </th>
+
+            </tr>
+            {% for gamme in pagination %}
+                <tr  >
+                    <td>
+                        <a href="{{ path("show_one_gamme",{'idGamme': gamme.id }) }}">
+                            {{ gamme.name }}
+                        </a>
+                    </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <a type="button" class="btn btn-info mr-2" href="{{ path('gamme_edit',{'id':gamme.id}) }}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a type="button" class="btn btn-danger" href="{{ path('gamme_remove',{'id':gamme.id}) }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="navigation d-flex justify-content-between">
+            <div>
+                Total result = {{ pagination.getTotalItemCount }}
+            </div>
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="d-flex justify-content-center">
+                <a type="button" class="btn btn-info" href="{{ path("create_gamme") }}">
+                    Créer
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ parent() }} |
+    Produits
+{% endblock %}
+{% block content %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success d-flex justify-content-between" role="alert">
+           <span>
+            {{ message }}
+           </span>
+            <i id="closeAlertSucces" class="fa fa-times" role="button"></i>
+        </div>
+    {% endfor %}
+
+    <div>
+        <div class="card-header mb-3">
+            <h4>
+                Produits
+            </h4>
+        </div>
+
+        <table  class="table table-striped">
+            <tr>
+                <th {% if pagination.isSorted('p.name') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(pagination, 'Nom', 'p.name') }}
+                </th>
+                <th  >
+                    Gamme
+                </th>
+                <th  colspan="2"{% if pagination.isSorted('p.sellPrice') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(pagination, 'Prix de vente', 'p.sellPrice') }}
+                </th>
+
+            </tr>
+            {% for produit in pagination %}
+                <tr   >
+                    <td>
+                        <a href="{{ path("show_produit",{'id': produit.id }) }}">
+                            {{ produit.name }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ produit.gamme.name }}
+                    </td>
+                    <td>
+                        {{ produit.sellPrice }}
+                    </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <a type="button" class="btn btn-info mr-2" href="{{ path('produit_edit',{'id':produit.id}) }}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a type="button" class="btn btn-danger" href="{{ path('produit_remove',{'id':produit.id}) }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div class="navigation d-flex justify-content-between">
+            <div>
+                Total result = {{ pagination.getTotalItemCount }}
+            </div>
+
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="d-flex justify-content-center">
+                <a type="button" class="btn btn-info" href="{{ path("produit_create") }}">
+                    Créer
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

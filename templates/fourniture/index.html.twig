@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ parent() }} |
+    Fourniture
+
+{% endblock %}
+{% block content %}
+    <div>
+
+        <div class="card-header mb-3">
+           <h4>
+           Fournitures
+           </h4>
+        </div>
+
+        <table  class="table table-striped">
+            <tr>
+
+
+                <th {% if pagination.isSorted('f.name') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(pagination, 'Nom', 'f.name') }}
+                </th>
+                <th >
+                    Gamme
+                </th>
+                <th  {% if pagination.isSorted('f.buyPrice') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(pagination, 'Prix d\'achat', 'f.buyPrice') }}
+                </th>
+                <th  colspan="2" {% if pagination.isSorted('f.isPriceUpdatable') %} class="sorted"{% endif %}>
+                    {{ knp_pagination_sortable(pagination, 'Prix modifiable', 'f.isPriceUpdatable') }}
+                </th>
+
+
+            </tr>
+            {% for fourniture in pagination %}
+                <tr   >
+                    <td>
+                        <a href="{{ path("fourniture_one_show",{'id': fourniture.id }) }}">
+                            {{ fourniture.name }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ fourniture.gamme.name }}
+                    </td>
+                    <td>
+                        {{ fourniture.buyPrice }}
+                    </td>
+                    <td>
+                        {% if fourniture.isPriceUpdatable  %} Oui {% else  %} Non {% endif %}
+                    </td>
+
+                  {% if is_granted('ROLE_ADMIN') %}
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <a type="button" class="btn btn-info mr-2" href="{{ path('fourniture_edit',{'id':fourniture.id}) }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a type="button" class="btn btn-danger" href="{{ path('fourniture_remove',{'id':fourniture.id}) }}">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                   {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="navigation d-flex justify-content-between">
+            <div>
+                Total result = {{ pagination.getTotalItemCount }}
+            </div>
+
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="d-flex justify-content-center">
+                <a type="button" class="btn btn-info" href="{{ path("fourniture_create") }}">
+                    Créer
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}

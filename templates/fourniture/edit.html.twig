@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | new Fourniture
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% import "/fourniture/macro/newAndEdit.html.twig" as forms %}
+        {{ forms.commonForm(form,'Modifier') }}
+    </div>
+{% endblock %}
+

@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}| Gamme
+{% endblock %}
+
+{% block content %}
+    <div class="card-header mb-3">
+        <h4>
+            Gamme : {{ gamme.name }}
+        </h4>
+    </div>
+    <h5 class="ml-2 mb-2"> Fournitures </h5>
+{% set fourniture = null %}
+
+    <div>
+         <form action="#" name="formSimulation" >
+            <div class="form-row">
+                <div class="form-group mb-2 col-md-8">
+                    <select name="fournitures_in_Gamme" class="form-control" id="fournitures_in_Gamme" >
+                        {% for fournitureElem in gamme.fournitures %}
+                            {% if loop.first %}
+                                {% set fourniture = fournitureElem %}
+                            {% endif %}
+                            <option value="{{ fournitureElem.id }}"
+                                    data-price="{{ fournitureElem.buyPrice }}"
+                                    data-isUpdateable={% if  fournitureElem.isPriceUpdatable %} 1 {% else %} 0 {% endif %}
+                            >
+                                {{ fournitureElem.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-2 col-md-3">
+                    <input type="number" class="form-control"  {% if not fourniture.isPriceUpdatable %}  disabled {% endif %} id="price" step="0.01" value="{{ fourniture.buyPrice }}">
+                </div>
+                <div class ="form-group mb-2 col-md-1 d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="addFourniture">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="fournituresModifiees" class="border w-100  overflow-auto" style="height: 5rem">
+                {# conteneur des span de simulation voir fichier simulation.js #}
+            </div>
+
+
+
+             <div class ="form-group mb-2 d-flex justify-content-center mt-4">
+                 <button type="submit" class="btn btn-primary" id="submitSimulation">Simuler</button>
+             </div>
+        </form>
+    </div>
+
+
+    <h5 class="ml-2 mb-2"> Produits </h5>
+
+    <table  class="table table-striped">
+        <tr>
+            <th {% if pagination.isSorted('p.name') %} class="sorted"{% endif %}>
+                {{ knp_pagination_sortable(pagination, 'Nom', 'p.name') }}
+            </th>
+            <th>
+                Composition
+            </th>
+
+            <th  {% if pagination.isSorted('p.sellPrice') %} class="sorted"{% endif %}>
+                {{ knp_pagination_sortable(pagination, 'Prix de vente', 'p.sellPrice') }}
+            </th>
+            <th >
+                Prix d'achat
+            </th>
+            <th >
+                bénéfice par produit
+            </th>
+
+        </tr>
+        {% for produit in pagination %}
+            {% set string = "" %}
+            {% set sum = 0 %}
+            {% for  pf in produit.produitFournitures.getValues()  %}
+                {% set string = "#{string} "  "#{pf.quantite} " "#{pf.fourniture.name}"  %}
+                {% set sum = sum + pf.fourniture.buyPrice*pf.quantite %}
+            {% endfor %}
+            <tr>
+                <td>
+                    <a href="{{ path("show_produit",{'id': produit.id }) }}">
+                        {{ produit.name }}
+                    </a>
+                </td>
+                <td>
+                    {{ string }}
+                </td>
+                <td data-sellPrice="{{ produit.sellPrice }}">
+                    {{ produit.sellPrice }}
+                </td>
+                <td data-fournitures={{ produit.produitFournitures.getValues()| join('-')}} >
+                    {{ sum }}
+                </td>
+                <td>
+                    {{ produit.sellPrice - sum }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <div class="navigation d-flex justify-content-between">
+        <div>
+            Total result = {{ pagination.getTotalItemCount }}
+        </div>
+
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="d-flex justify-content-center">
+            <a type="button" class="btn btn-info mr-2" href="{{path('gamme_edit',{'id':gamme.id}) }}" >
+                Editer
+            </a>
+            <a type="button" class="btn btn-danger"  href="{{path('gamme_remove',{'id':gamme.id}) }}">
+                Supprimer
+            </a>
+        </div>
+    {% endif %}
+
+
+{% endblock %}
+ {% block javascripts %}
+     {{ parent() }}
+     {{ encore_entry_script_tags('simulation') }}
+ {% endblock %}

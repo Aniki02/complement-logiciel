@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}F & BC - RENTAB{% endblock %}</title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+        <nav class="navbar navbar-expand-lg  sticky-top navbar-dark bg-primary">
+            <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link {% if accueilActif is defined %} disabled {% else %} active {% endif %}" href="{{ path('app_home') }}">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                    <a class="nav-item nav-link active" href="{{ path('index_produits') }}">
+                        Produits
+                    </a>
+                    <a class="nav-item nav-link active" href="{{ path('index_gamme') }}">Gammes</a>
+                    <a class="nav-item nav-link active" href="{{ path('index_fournitures') }}">Fournitures</a>
+                    <a class="nav-item nav-link active" href="{{ path('index_calcul_rentabilite') }}">Rentabilité</a>
+                </div>
+                <div class="navbar-nav">
+
+                    <a class="nav-item nav-link active" href="{% if is_granted('IS_AUTHENTICATED_FULLY') %} {{ path('app_logout') }} {% else %} {{ path('app_login') }} {% endif %}">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <i class="fas fa-sign-out-alt"></i>
+                            Se deconnecter
+                        {% else %}
+                            <i class="fas fa-sign-in-alt"></i>
+                            Se connecter
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div id="content" class="container my-3 ">
+            {% block content %}{% endblock %}
+        </div>
+        <div id="footer" class="card-footer  d-flex justify-content-center bg-primary text-light">
+            <div>
+                <a href="{{ path('about') }}" class="btn btn-link {% if aproposActif is defined %} disabled {% else %} active {% endif %}  text-light">
+                    <i class="fas fa-info-circle"></i>
+                    A propos de cette application
+                </a>
+            </div>
+            <div>
+                <a href="{{ path('contactUs')}}" class="btn btn-link text-light">
+                    <i class="fas fa-bug"></i>
+                    Signaler un bug
+                </a>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</body>
+</html>

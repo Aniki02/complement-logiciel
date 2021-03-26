@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Gamme
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% import "/gamme/macro/newAndEdit.html.twig" as forms %}
+        {{ forms.commonForm(form,'Créer') }}
+    </div>
+
+{% endblock %}
+
